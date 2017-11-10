@@ -8,7 +8,7 @@ A [Drone][] plugin to run [packer][] builds.
 pipeline:
   build:
     image: kayako/drone-packer
-    include_files: [ config/common.json, config/$${name}.json ]
+    include_files: [ config/common.json, config/<target> ]
     target: base.json
     variables:
         name: packer
@@ -19,7 +19,7 @@ pipeline:
 
  - `account`: AWS account ID in which to assume the role. Instance IAM role will be used by default
  - `use_ci_role`: IAM role name to use. Defaults to `ci`. Ignored if `account` is not provided
- - `target`: Name of target packer template (without .json extension) to execute
+ - `target`: Name of target packer template to execute
  - `variables`: Optional variables to pass to packer build command
  - `secret_variables`: List of variables to be read from environment
  - `include_files`: List of variable files to include in build
@@ -28,13 +28,13 @@ pipeline:
 
 ## Notes
 
- - `target` must be the base name of the target template. `target` can be provided as plugin parameter
+ - `target` must be the name of the target template. `target` can be provided as plugin parameter
    in .drone.yml file or it can be passed as deployment parameter using either drone CLI or
    github deployment api.
  - `variables` is optional and must be a flat dictionary. An intact JSON representation of the dictionary
    will be passed to packer.
  - `include_files` is an optional list of path to JSON files relative to build directory. It can contain
-   `$${target}` escaped variable which will be replaced by actual target name as provided to the plugin.
+   `<target>` literal string which will be replaced by actual target name as provided to the plugin.
  - `except` and `only`, if provided, must be valid Yaml list types.
  - `secret_variables` is an optional list of variable names that should be read from environment.
     Make sure to whitelist the secrets in drone configuration file
@@ -47,7 +47,7 @@ Following configuration
 pipeline:
   build:
     image: kayako/drone-packer
-    include_files: [ config/common.json, config/$${target} ]
+    include_files: [ config/common.json, config/<target> ]
     target: base.json
     variables:
         name: packer
@@ -76,5 +76,5 @@ packer build --var-file build_variables.json \
     base.json
 ```
 
-[joshdvir/drone-ecs-deploy]: https://github.com/joshdvir/drone-ecs-deploy
+[packer]: https://packer.io
 [Drone]: https://docs.drone.io

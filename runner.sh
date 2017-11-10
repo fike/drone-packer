@@ -1,5 +1,11 @@
 #!/bin/bash
 
+function pdebug {
+  if [ -n "${PLUGIN_DEBUG}" ] || [ -n "${debug}" ]; then
+    echo "+ DEBUG: ${1}"
+  fi
+}
+
 ci_role=${PLUGIN_USE_CI_ROLE:-'ci'}
 session_id="${DRONE_COMMIT_SHA:0:10}-${DRONE_BUILD_NUMBER}"
 account_id=${PLUGIN_ACCOUNT:-'none'}
@@ -26,6 +32,9 @@ else
   echo "{}" > build_variables.json
 fi
 
+pdebug "Declared variables:"
+pdebug "$(cat build_variables.json)"
+
 target="${PLUGIN_TARGET:-${target}}"
 if [ "${target}" = "" ]; then
   echo "Missing required attribute target"
@@ -35,15 +44,15 @@ echo "Build Target: ${target}"
 
 inclusions="--var-file build_variables.json"
 if [ -n "${PLUGIN_INCLUDE_FILES}" ]; then
-  for inc_name in ${PLUGIN_INCLUDE_FILES/,/ }; do
-    inclusions="${inclusions} --var-file ${inc_name}"
+  for inc_name in ${PLUGIN_INCLUDE_FILES//,/ }; do
+    inclusions="${inclusions} --var-file ${inc_name/<target>/${target}}"
   done
 fi
 
 include_vars=""
 if [ -n "${PLUGIN_SECRET_VARIABLES}" ]; then
-  for sec_var in ${PLUGIN_SECRET_VARIABLES/,/ }; do
-    include_vars="${include_vars} --var '${sec_var}=$(printenv ${sec_var^^})'"
+  for sec_var in ${PLUGIN_SECRET_VARIABLES//,/ }; do
+    include_vars="${include_vars} --var ${sec_var}=$(printenv ${sec_var^^})"
   done
 fi
 
@@ -55,6 +64,11 @@ fi
 to_build=""
 if [ -n "${PLUGIN_ONLY}" ]; then
   to_build="--only ${PLUGIN_ONLY}"
+fi
+
+
+if [ -n "${PLUGIN_DEBUG}" ] || [ -n "${debug}" ]; then
+  set -x
 fi
 
 packer build ${inclusions} ${to_skip} ${to_build} ${include_vars} "${target}"

@@ -25,6 +25,7 @@ pipeline:
  - `include_files`: List of variable files to include in build
  - `except`: List of builders to skip
  - `only`: List of builders to run
+ - `dry_run`: Only run a Packer validate. `true` / `false` (default: false)
 
 ## Notes
 
@@ -49,6 +50,7 @@ pipeline:
     image: kayako/drone-packer
     include_files: [ config/common.json, config/<target> ]
     target: base.json
+    dry_run: false
     variables:
         name: packer
         version: 33

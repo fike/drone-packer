@@ -1,5 +1,7 @@
 # Drone Packer
 
+[![Docker build](https://quay.io/repository/heetch/drone-packer/status "Docker Repository on Quay")](https://quay.io/repository/heetch/drone-packer)
+
 A [Drone][] plugin to run [packer][] builds.
 
 ## Usage

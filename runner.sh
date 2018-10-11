@@ -24,7 +24,7 @@ echo "  IAM Role Session ID: ${session_id}"
 
 # Get authentified if a role is specified
 if [ "${account_id}" != "IAM Role" ]; then
-  iam_creds=$(aws sts assume-role --role-arn "arn:aws:iam::${account_id}:role/${ci_role}" --role-session-name "drone-${session_id}" --region=${PLUGIN_AWS_REGION:-'us-east-1'} | python -m json.tool)
+  iam_creds=$(aws sts assume-role --role-arn "arn:aws:iam::${account_id}:role/${ci_role}" --role-session-name "drone-${session_id}" --duration-seconds "43200" --region=${PLUGIN_AWS_REGION:-'us-east-1'} | python -m json.tool)
 
   if [ -z "${iam_creds}" ]; then
     echo "ERROR: Unable to assume AWS role"

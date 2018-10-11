@@ -1,5 +1,7 @@
 # Drone Packer
 
+[![Docker build](https://quay.io/repository/heetch/drone-packer/status "Docker Repository on Quay")](https://quay.io/repository/heetch/drone-packer)
+
 A [Drone][] plugin to run [packer][] builds.
 
 ## Usage
@@ -25,6 +27,7 @@ pipeline:
  - `include_files`: List of variable files to include in build
  - `except`: List of builders to skip
  - `only`: List of builders to run
+ - `dry_run`: Only run a Packer validate. `true` / `false` (default: false)
 
 ## Notes
 
@@ -49,6 +52,7 @@ pipeline:
     image: kayako/drone-packer
     include_files: [ config/common.json, config/<target> ]
     target: base.json
+    dry_run: false
     variables:
         name: packer
         version: 33
